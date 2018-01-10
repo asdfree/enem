@@ -57,19 +57,11 @@ dbGetQuery( db ,
 	FROM microdados_enem_2015 
 	GROUP BY fathers_education" 
 )
-dbSendQuery( db , 
-	"CREATE FUNCTION 
-		div_noerror(l DOUBLE, r DOUBLE) 
-	RETURNS DOUBLE 
-	EXTERNAL NAME calc.div_noerror" 
-)
 dbGetQuery( db , 
 	"SELECT 
 		uf_residencia , 
-		div_noerror( 
-			COUNT(*) , 
-			( SELECT COUNT(*) FROM microdados_enem_2015 ) 
-		) AS share_uf_residencia
+		COUNT(*) / ( SELECT COUNT(*) FROM microdados_enem_2015 ) 
+			AS share_uf_residencia
 	FROM microdados_enem_2015 
 	GROUP BY uf_residencia" 
 )
