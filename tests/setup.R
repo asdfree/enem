@@ -74,12 +74,22 @@ dbGetQuery( db ,
 	FROM microdados_enem_2015 
 	GROUP BY fathers_education" 
 )
-dbGetQuery( db , "SELECT QUANTILE( nota_mt , 0.5 ) FROM microdados_enem_2015" )
+RSQLite::initExtension( db )
+
+dbGetQuery( db , 
+	"SELECT 
+		LOWER_QUARTILE( nota_mt ) , 
+		MEDIAN( nota_mt ) , 
+		UPPER_QUARTILE( nota_mt ) 
+	FROM microdados_enem_2015" 
+)
 
 dbGetQuery( db , 
 	"SELECT 
 		fathers_education , 
-		QUANTILE( nota_mt , 0.5 ) AS median_nota_mt
+		LOWER_QUARTILE( nota_mt ) AS lower_quartile_nota_mt , 
+		MEDIAN( nota_mt ) AS median_nota_mt , 
+		UPPER_QUARTILE( nota_mt ) AS upper_quartile_nota_mt
 	FROM microdados_enem_2015 
 	GROUP BY fathers_education" 
 )
@@ -89,18 +99,20 @@ dbGetQuery( db ,
 	FROM microdados_enem_2015
 	WHERE in_presenca_mt = 1"
 )
+RSQLite::initExtension( db )
+
 dbGetQuery( db , 
 	"SELECT 
-		VAR_SAMP( nota_mt ) , 
-		STDDEV_SAMP( nota_mt ) 
+		VARIANCE( nota_mt ) , 
+		STDEV( nota_mt ) 
 	FROM microdados_enem_2015" 
 )
 
 dbGetQuery( db , 
 	"SELECT 
 		fathers_education , 
-		VAR_SAMP( nota_mt ) AS var_nota_mt ,
-		STDDEV_SAMP( nota_mt ) AS stddev_nota_mt
+		VARIANCE( nota_mt ) AS var_nota_mt ,
+		STDEV( nota_mt ) AS stddev_nota_mt
 	FROM microdados_enem_2015 
 	GROUP BY fathers_education" 
 )
