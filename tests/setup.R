@@ -116,19 +116,6 @@ dbGetQuery( db ,
 	FROM microdados_enem_2015 
 	GROUP BY fathers_education" 
 )
-dbGetQuery( db , 
-	"SELECT 
-		CORR( CAST( female AS DOUBLE ) , CAST( nota_mt AS DOUBLE ) )
-	FROM microdados_enem_2015" 
-)
-
-dbGetQuery( db , 
-	"SELECT 
-		fathers_education , 
-		CORR( CAST( female AS DOUBLE ) , CAST( nota_mt AS DOUBLE ) )
-	FROM microdados_enem_2015 
-	GROUP BY fathers_education" 
-)
 library(dplyr)
 dplyr_db <- dplyr::src_sqlite( dbdir )
 enem_tbl <- tbl( dplyr_db , 'microdados_enem_2015' )
