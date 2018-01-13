@@ -119,6 +119,7 @@ dbGetQuery( db ,
 	GROUP BY fathers_education" 
 )
 library(dplyr)
+library(dbplyr)
 dplyr_db <- dplyr::src_sqlite( dbdir )
 enem_tbl <- tbl( dplyr_db , 'microdados_enem_2015' )
 enem_tbl %>%
