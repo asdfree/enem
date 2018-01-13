@@ -118,7 +118,7 @@ dbGetQuery( db ,
 	FROM microdados_enem_2015 
 	GROUP BY fathers_education" 
 )
-enem_three_columns_df <- 
+enem_slim_df <- 
 	dbGetQuery( db , 
 		"SELECT 
 			nota_mt , 
@@ -127,14 +127,15 @@ enem_three_columns_df <-
 		FROM microdados_enem_2015" 
 	)
 
-t.test( nota_mt ~ female , enem_three_columns_df )
-this_table <- table( enem_three_columns_df[ , c( "female" , "uf_residencia" ) ] )
+t.test( nota_mt ~ female , enem_slim_df )
+this_table <-
+	table( enem_slim_df[ , c( "female" , "uf_residencia" ) ] )
 
 chisq.test( this_table )
 glm_result <- 
 	glm( 
 		nota_mt ~ female + uf_residencia , 
-		data = enem_three_columns_df
+		data = enem_slim_df
 	)
 
 summary( glm_result )
