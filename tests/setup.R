@@ -118,6 +118,26 @@ dbGetQuery( db ,
 	FROM microdados_enem_2015 
 	GROUP BY fathers_education" 
 )
+enem_three_columns_df <- 
+	dbGetQuery( db , 
+		"SELECT 
+			nota_mt , 
+			female ,
+			uf_residencia
+		FROM microdados_enem_2015" 
+	)
+
+t.test( nota_mt ~ female , enem_three_columns_df )
+this_table <- table( enem_three_columns_df[ , c( "female" , "uf_residencia" ) ] )
+
+chisq.test( this_table )
+glm_result <- 
+	glm( 
+		nota_mt ~ female + uf_residencia , 
+		data = enem_three_columns_df
+	)
+
+summary( glm_result )
 library(dplyr)
 library(dbplyr)
 dplyr_db <- dplyr::src_sqlite( dbdir )
