@@ -1,6 +1,6 @@
-#
-#
-#
+# graduation stage
+# shake hands, toss cap, unroll scroll,
+# mais um exame?
 library(httr)
 library(archive)
 
