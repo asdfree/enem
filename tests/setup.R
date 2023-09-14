@@ -124,18 +124,3 @@ enem_dt <- data.table( enem_df )
 enem_dt[ , mean( nu_nota_mt , na.rm = TRUE ) ]
 
 enem_dt[ , mean( nu_nota_mt , na.rm = TRUE ) , by = administrative_category ]
-library(duckdb)
-con <- dbConnect( duckdb::duckdb() , dbdir = 'my-db.duckdb' )
-dbWriteTable( con , 'enem' , enem_df )
-dbGetQuery( con , 'SELECT AVG( nu_nota_mt ) FROM enem' )
-
-dbGetQuery(
-	con ,
-	'SELECT
-		administrative_category ,
-		AVG( nu_nota_mt )
-	FROM
-		enem
-	GROUP BY
-		administrative_category'
-)
