@@ -29,21 +29,18 @@ enem_df <-
 	transform( 
 		enem_df , 
 		
-		# qual foi o tempo gasto por voce para concluir a prova?
-		less_than_two_hours = as.numeric( co_rs_i9 %in% c( 'A' , 'B' ) ) ,
+		domestic_worker = as.numeric( q007 %in% c( 'B' , 'C' , 'D' ) ) ,
 		
 		administrative_category =
 			factor(
-				co_categad ,
-				levels = c( 1:5 , 7 ) ,
-				labels = c( '1. Pública Federal' , '2. Pública Estadual' , 
-				'3. Pública Municipal' , '4. Privada com fins lucrativos' , 
-				'5. Privada sem fins lucrativos' , '7. Especial' )
+				tp_dependencia_adm_esc ,
+				levels = 1:4 ,
+				labels = c( 'Federal' , 'Estadual' , 'Municipal' , 'Privada' )
 			) ,
 
 		state_name = 
 			factor( 
-				co_uf_curso , 
+				co_uf_esc , 
 				levels = c( 11:17 , 21:29 , 31:33 , 35 , 41:43 , 50:53 ) ,
 				labels = c( "Rondonia" , "Acre" , "Amazonas" , 
 				"Roraima" , "Para" , "Amapa" , "Tocantins" , 
@@ -60,81 +57,81 @@ enem_df <-
 	
 nrow( enem_df )
 
-table( enem_df[ , "fathers_education" ] , useNA = "always" )
-mean( enem_df[ , "nota_mt" ] )
+table( enem_df[ , "administrative_category" ] , useNA = "always" )
+mean( enem_df[ , "nu_nota_mt" ] )
 
 tapply(
-	enem_df[ , "nota_mt" ] ,
-	enem_df[ , "fathers_education" ] ,
+	enem_df[ , "nu_nota_mt" ] ,
+	enem_df[ , "administrative_category" ] ,
 	mean 
 )
-prop.table( table( enem_df[ , "uf_residencia" ] ) )
+prop.table( table( enem_df[ , "state_name" ] ) )
 
 prop.table(
-	table( enem_df[ , c( "uf_residencia" , "fathers_education" ) ] ) ,
+	table( enem_df[ , c( "state_name" , "administrative_category" ) ] ) ,
 	margin = 2
 )
-sum( enem_df[ , "nota_mt" ] )
+sum( enem_df[ , "nu_nota_mt" ] )
 
 tapply(
-	enem_df[ , "nota_mt" ] ,
-	enem_df[ , "fathers_education" ] ,
+	enem_df[ , "nu_nota_mt" ] ,
+	enem_df[ , "administrative_category" ] ,
 	sum 
 )
-quantile( enem_df[ , "nota_mt" ] , 0.5 )
+quantile( enem_df[ , "nu_nota_mt" ] , 0.5 )
 
 tapply(
-	enem_df[ , "nota_mt" ] ,
-	enem_df[ , "fathers_education" ] ,
+	enem_df[ , "nu_nota_mt" ] ,
+	enem_df[ , "administrative_category" ] ,
 	quantile ,
 	0.5 
 )
-sub_enem_df <- subset( enem_df , in_presenca_mt = 1 )
-mean( sub_enem_df[ , "nota_mt" ] )
-var( enem_df[ , "nota_mt" ] )
+sub_enem_df <- subset( enem_df , q0002 %in% c( 'E' , 'F' , 'G' ) )
+mean( sub_enem_df[ , "nu_nota_mt" ] )
+var( enem_df[ , "nu_nota_mt" ] )
 
 tapply(
-	enem_df[ , "nota_mt" ] ,
-	enem_df[ , "fathers_education" ] ,
+	enem_df[ , "nu_nota_mt" ] ,
+	enem_df[ , "administrative_category" ] ,
 	var 
 )
-t.test( nota_mt ~ female , enem_df )
-this_table <- table( enem_df[ , c( "female" , "uf_residencia" ) ] )
+t.test( nu_nota_mt ~ domestic_worker , enem_df )
+this_table <- table( enem_df[ , c( "domestic_worker" , "state_name" ) ] )
 
 chisq.test( this_table )
 glm_result <- 
 	glm( 
-		nota_mt ~ female + uf_residencia , 
+		nu_nota_mt ~ domestic_worker + state_name , 
 		data = enem_df
 	)
 
 summary( glm_result )
-
+stopifnot( nrow( enem_df ) == 3476105 )
 library(dplyr)
 enem_tbl <- as_tibble( enem_df )
 enem_tbl %>%
-	summarize( mean = mean( nota_mt ) )
+	summarize( mean = mean( nu_nota_mt ) )
 
 enem_tbl %>%
-	group_by( fathers_education ) %>%
-	summarize( mean = mean( nota_mt ) )
+	group_by( administrative_category ) %>%
+	summarize( mean = mean( nu_nota_mt ) )
 library(data.table)
 enem_dt <- data.table( enem_df )
-enem_dt[ , mean( nota_mt ) ]
+enem_dt[ , mean( nu_nota_mt ) ]
 
-enem_dt[ , mean( nota_mt ) , by = fathers_education ]
+enem_dt[ , mean( nu_nota_mt ) , by = administrative_category ]
 library(duckdb)
 con <- dbConnect( duckdb::duckdb() , dbdir = 'my-db.duckdb' )
 dbWriteTable( con , 'enem' , enem_df )
-dbGetQuery( con , 'SELECT AVG( nota_mt ) FROM enem' )
+dbGetQuery( con , 'SELECT AVG( nu_nota_mt ) FROM enem' )
 
 dbGetQuery(
 	con ,
 	'SELECT
-		fathers_education ,
-		AVG( nota_mt )
+		administrative_category ,
+		AVG( nu_nota_mt )
 	FROM
 		enem
 	GROUP BY
-		fathers_education'
+		administrative_category'
 )
