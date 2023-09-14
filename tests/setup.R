@@ -89,7 +89,7 @@ tapply(
 	0.5 ,
 	na.rm = TRUE 
 )
-sub_enem_df <- subset( enem_df , q0002 %in% c( 'E' , 'F' , 'G' ) )
+sub_enem_df <- subset( enem_df , q002 %in% c( 'E' , 'F' , 'G' ) )
 mean( sub_enem_df[ , "nu_nota_mt" ] , na.rm = TRUE )
 var( enem_df[ , "nu_nota_mt" ] , na.rm = TRUE )
 
