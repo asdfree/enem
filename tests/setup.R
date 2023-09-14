@@ -58,12 +58,13 @@ enem_df <-
 nrow( enem_df )
 
 table( enem_df[ , "administrative_category" ] , useNA = "always" )
-mean( enem_df[ , "nu_nota_mt" ] )
+mean( enem_df[ , "nu_nota_mt" ] , na.rm = TRUE )
 
 tapply(
 	enem_df[ , "nu_nota_mt" ] ,
 	enem_df[ , "administrative_category" ] ,
-	mean 
+	mean ,
+	na.rm = TRUE 
 )
 prop.table( table( enem_df[ , "state_name" ] ) )
 
@@ -71,29 +72,32 @@ prop.table(
 	table( enem_df[ , c( "state_name" , "administrative_category" ) ] ) ,
 	margin = 2
 )
-sum( enem_df[ , "nu_nota_mt" ] )
+sum( enem_df[ , "nu_nota_mt" ] , na.rm = TRUE )
 
 tapply(
 	enem_df[ , "nu_nota_mt" ] ,
 	enem_df[ , "administrative_category" ] ,
-	sum 
+	sum ,
+	na.rm = TRUE 
 )
-quantile( enem_df[ , "nu_nota_mt" ] , 0.5 )
+quantile( enem_df[ , "nu_nota_mt" ] , 0.5 , na.rm = TRUE )
 
 tapply(
 	enem_df[ , "nu_nota_mt" ] ,
 	enem_df[ , "administrative_category" ] ,
 	quantile ,
-	0.5 
+	0.5 ,
+	na.rm = TRUE 
 )
 sub_enem_df <- subset( enem_df , q0002 %in% c( 'E' , 'F' , 'G' ) )
-mean( sub_enem_df[ , "nu_nota_mt" ] )
-var( enem_df[ , "nu_nota_mt" ] )
+mean( sub_enem_df[ , "nu_nota_mt" ] , na.rm = TRUE )
+var( enem_df[ , "nu_nota_mt" ] , na.rm = TRUE )
 
 tapply(
 	enem_df[ , "nu_nota_mt" ] ,
 	enem_df[ , "administrative_category" ] ,
-	var 
+	var ,
+	na.rm = TRUE 
 )
 t.test( nu_nota_mt ~ domestic_worker , enem_df )
 this_table <- table( enem_df[ , c( "domestic_worker" , "state_name" ) ] )
@@ -110,16 +114,16 @@ stopifnot( nrow( enem_df ) == 3476105 )
 library(dplyr)
 enem_tbl <- as_tibble( enem_df )
 enem_tbl %>%
-	summarize( mean = mean( nu_nota_mt ) )
+	summarize( mean = mean( nu_nota_mt , na.rm = TRUE ) )
 
 enem_tbl %>%
 	group_by( administrative_category ) %>%
-	summarize( mean = mean( nu_nota_mt ) )
+	summarize( mean = mean( nu_nota_mt , na.rm = TRUE ) )
 library(data.table)
 enem_dt <- data.table( enem_df )
-enem_dt[ , mean( nu_nota_mt ) ]
+enem_dt[ , mean( nu_nota_mt , na.rm = TRUE ) ]
 
-enem_dt[ , mean( nu_nota_mt ) , by = administrative_category ]
+enem_dt[ , mean( nu_nota_mt , na.rm = TRUE ) , by = administrative_category ]
 library(duckdb)
 con <- dbConnect( duckdb::duckdb() , dbdir = 'my-db.duckdb' )
 dbWriteTable( con , 'enem' , enem_df )
