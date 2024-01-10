@@ -17,7 +17,7 @@ enem_fns <- list.files( tempdir() , recursive = TRUE , full.names = TRUE )
 
 enem_fn <- grep( "MICRODADOS_ENEM_([0-9][0-9][0-9][0-9])\\.csv$" , enem_fns , value = TRUE )
 
-enem_tbl <- read_csv2( enem_fn )
+enem_tbl <- read_csv2( enem_fn , locale = locale( encoding = 'latin1' ) )
 
 enem_df <- data.frame( enem_tbl )
 
@@ -124,3 +124,18 @@ enem_dt <- data.table( enem_df )
 enem_dt[ , mean( nu_nota_mt , na.rm = TRUE ) ]
 
 enem_dt[ , mean( nu_nota_mt , na.rm = TRUE ) , by = administrative_category ]
+library(duckdb)
+con <- dbConnect( duckdb::duckdb() , dbdir = 'my-db.duckdb' )
+dbWriteTable( con , 'enem' , enem_df )
+dbGetQuery( con , 'SELECT AVG( nu_nota_mt ) FROM enem' )
+
+dbGetQuery(
+	con ,
+	'SELECT
+		administrative_category ,
+		AVG( nu_nota_mt )
+	FROM
+		enem
+	GROUP BY
+		administrative_category'
+)
