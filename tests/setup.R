@@ -1,14 +1,15 @@
 # graduation stage
 # shake hands, toss cap, unroll scroll,
 # mais um exame?
-library(httr)
+options( timeout = 999 )
+
 library(archive)
 
 tf <- tempfile()
 
 this_url <-	"https://download.inep.gov.br/microdados/microdados_enem_2022.zip"
 
-GET( this_url , write_disk( tf ) , progress() )
+download.file( this_url , tf , mode = 'wb' )
 
 archive_extract( tf , dir = tempdir() )
 library(readr)
