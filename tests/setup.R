@@ -54,7 +54,6 @@ enem_df <-
 			)
 
 	)
-	
 nrow( enem_df )
 
 table( enem_df[ , "administrative_category" ] , useNA = "always" )
